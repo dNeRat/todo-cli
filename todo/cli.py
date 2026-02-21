@@ -77,3 +77,42 @@ def cmd_rm(tasks: list[Task], task_id: int) -> None:
     print(f"del: [{task_id}]")
 
 
+def main(argv: list[str] | None = None) -> None:
+    if argv is None:
+        argv = sys.argv
+
+    if len(argv) < 2:
+        usage()
+        return
+
+    cmd = argv[1].lower()
+    tasks = load_tasks()
+
+    if cmd == "add":
+        if len(argv) < 3:
+            print("text", file=sys.stderr)
+            sys.exit(1)
+        text = " ".join(argv[2:])  # чтобы работало без кавычек тоже
+        cmd_add(tasks, text)
+
+    elif cmd == "list":
+        cmd_list(tasks)
+
+    elif cmd == "done":
+        if len(argv) != 3:
+            print("id nado", file=sys.stderr)
+            sys.exit(1)
+        task_id = _parse_id(argv[2])
+        cmd_done(tasks, task_id)
+
+    elif cmd == "rm":
+        if len(argv) != 3:
+            print("id nado", file=sys.stderr)
+            sys.exit(1)
+        task_id = _parse_id(argv[2])
+        cmd_rm(tasks, task_id)
+
+    else:
+        print(f"neponimeow {cmd}", file=sys.stderr)
+        usage()
+        sys.exit(1)
