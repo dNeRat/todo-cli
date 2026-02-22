@@ -14,12 +14,14 @@ def usage() -> None:
         "   показать таски  list \n"
         "   отметить выполненной  done ID\n"
         "   удалить  rm ID \n"
+        "   удалить все выполненные  clear \n"
         "\n"
         "Примеры:\n"
         "  py main.py add \"выгулять кота\"\n"
         "  py main.py list\n"
         "  py main.py done 1\n"
         "  py main.py rm 1\n"
+        "  py main.py clear\n"
     )
 
 
@@ -44,7 +46,10 @@ def cmd_list(tasks: list[Task]) -> None:
         print("список пуст")
         return
 
-    for t in tasks:
+    # Сначала невыполненные (done=False), потом выполненные (done=True), и по id
+    ordered = sorted(tasks, key=lambda t: (t.done, t.id))
+
+    for t in ordered:
         mark = "+" if t.done else " "
         print(f"[{t.id:03d}] [{mark}] {t.text}")
 
@@ -87,6 +92,20 @@ def cmd_rm(tasks: list[Task], task_id: int) -> None:
     save_tasks(new_tasks)
     print(f"del: [{task_id}]")
 
+def cmd_clear(tasks: list[Task]) -> None:
+    """
+    Удаляет все выполненные задачи
+    """
+    remaining = [t for t in tasks if not t.done]
+    removed = len(tasks) - len(remaining)
+
+    if removed == 0:
+        print("Нет выполненных задач, нечего очищать")
+        return
+
+    save_tasks(remaining)
+    print(f"Удалено выполненных задач: {removed}")
+
 
 def main(argv: list[str] | None = None) -> None:
     if argv is None:
@@ -108,6 +127,9 @@ def main(argv: list[str] | None = None) -> None:
 
     elif cmd == "list":
         cmd_list(tasks)
+
+    elif cmd == "clear":
+        cmd_clear(tasks)
 
     elif cmd == "done":
         if len(argv) != 3:
