@@ -9,6 +9,17 @@ from todo.storage import load_tasks, save_tasks
 def usage() -> None:
     print(
         "To-Do CLI\n"
+        "Команды:\n"
+        "   добавить таску  add \"текст\"\n"
+        "   показать таски  list \n"
+        "   отметить выполненной  done ID\n"
+        "   удалить  rm ID \n"
+        "\n"
+        "Примеры:\n"
+        "  py main.py add \"выгулять кота\"\n"
+        "  py main.py list\n"
+        "  py main.py done 1\n"
+        "  py main.py rm 1\n"
     )
 
 
